@@ -4642,7 +4642,11 @@ void rtw_cfg80211_rx_probe_request(_adapter *adapter, u8 *frame, uint frame_len)
 #ifdef CONFIG_DEBUG_CFG80211
 	DBG_8192C("RTW_Rx: probe request, cur_ch=%d\n", channel);
 #endif /* CONFIG_DEBUG_CFG80211 */
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37)) || defined(COMPAT_KERNEL_RELEASE)
 	rtw_cfg80211_rx_mgmt(adapter, freq, 0, frame, frame_len, GFP_ATOMIC);
+#else
+	cfg80211_rx_action(adapter->pnetdev, freq, frame, frame_len, GFP_ATOMIC);
+#endif
 }
 
 void rtw_cfg80211_rx_action_p2p(_adapter *padapter, u8 *pmgmt_frame, uint frame_len)
